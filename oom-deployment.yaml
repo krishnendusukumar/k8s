@@ -1,31 +1,26 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: oom-demo
-#   labels:
-#     app: oom-demo
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: oom-demo
-#   template:
-#     metadata:
-#       labels:
-#         app: oom-demo
-#     spec:
-#       containers:
-#       - name: stress
-#         image: polinux/stress
-#         # resources:
-#         #   limits:
-#         #     memory: "100Mi"
-#         #   requests:
-#         #     memory: "50Mi"
-#         # command: ["stress"]
-#         # args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
-
-
-# "Identify the error and determine why the container is not running.
-
-# Update the deployment configuration and create a pull request to resolve the issue."
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oom-demo
+  labels:
+    app: oom-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oom-demo
+  template:
+    metadata:
+      labels:
+        app: oom-demo
+    spec:
+      containers:
+      - name: stress
+        image: polinux/stress
+        resources:
+          limits:
+            memory: "100Mi"
+          requests:
+            memory: "50Mi"
+        command: ["stress"]
+        args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
