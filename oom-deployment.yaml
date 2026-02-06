@@ -2,7 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: oom-demo
-  namespace: default
+  labels:
+    app: oom-demo
 spec:
   replicas: 1
   selector:
@@ -16,16 +17,10 @@ spec:
       containers:
       - name: stress
         image: polinux/stress
-        command: ["stress"]
-        args:
-          - "--vm"
-          - "1"
-          - "--vm-bytes"
-          - "150M"
-          - "--vm-hang"
-          - "1"
         resources:
-          requests:
-            memory: "150Mi"
           limits:
-            memory: "200Mi"
+            memory: "100Mi"
+          requests:
+            memory: "50Mi"
+        command: ["stress"]
+        args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
