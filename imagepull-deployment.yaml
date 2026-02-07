@@ -2,10 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: imagepull-demo
-  namespace: default
+  labels:
+    app: imagepull-demo
 spec:
-  strategy:
-    type: Recreate
   replicas: 1
   selector:
     matchLabels:
@@ -17,6 +16,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginxx:latest
+        image: nginx:latest
         ports:
         - containerPort: 80
