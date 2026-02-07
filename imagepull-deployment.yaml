@@ -14,7 +14,7 @@ spec:
         app: imagepull-demo
     spec:
       containers:
-      - name: nginx
+      - name: nginxx
         image: nginx:latest
         ports:
         - containerPort: 80
