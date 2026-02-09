@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpu-throttling-demo
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpu-throttling
+  template:
+    metadata:
+      labels:
+        app: cpu-throttling
+    spec:
+      containers:
+      - name: stress
+        image: vish/stress
+        args:
+        - -cpus
+        - "1" 
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "200m" 
