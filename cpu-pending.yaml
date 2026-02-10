@@ -4,20 +4,18 @@ metadata:
   name: cpu-pending-demo
   namespace: default
 spec:
-  strategy:
-    type: Recreate
   replicas: 1
   selector:
     matchLabels:
-      app: cpu-pending
+      app: cpu-pending-demo
   template:
     metadata:
       labels:
-        app: cpu-pending
+        app: cpu-pending-demo
     spec:
       containers:
-      - name: nginx
+      - name: cpu-pending-demo
         image: nginx
         resources:
           requests:
-            cpu: "100" 
+            cpu: "100m"
