@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-fixed
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-fixed
+  template:
+    metadata:
+      labels:
+        app: nginx-fixed
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service-fixed
+spec:
+  selector:
+    app: nginx-fixed
+  ports:
+  - port: 80
+    targetPort: 9999    # BROKEN: Intentionally point to wrong port to cause 502
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress-fixed
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service-fixed
+            port:
+              number: 80
