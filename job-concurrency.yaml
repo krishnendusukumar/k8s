@@ -2,15 +2,19 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: demo-concurrency-forbid
+  namespace: default
 spec:
   schedule: "*/1 * * * *"
-  concurrencyPolicy: Forbid
+  concurrencyPolicy: Allow
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: long-job
+          - name: hello
             image: busybox
-            command: ["/bin/sh", "-c", "sleep 90"]
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster; sleep 90
           restartPolicy: OnFailure
