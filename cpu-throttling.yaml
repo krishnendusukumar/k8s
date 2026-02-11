@@ -23,6 +23,6 @@ spec:
         - "1" 
         resources:
           requests:
-            cpu: "100m"
+            cpu: "500m"
           limits:
-            cpu: "200m" 
+            cpu: "1000m" 
