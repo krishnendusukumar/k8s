@@ -4,7 +4,7 @@ metadata:
   name: demo-concurrency-forbid
 spec:
   schedule: "*/1 * * * *"
-  concurrencyPolicy: Allow
+  concurrencyPolicy: forbid
   jobTemplate:
     spec:
       template:
