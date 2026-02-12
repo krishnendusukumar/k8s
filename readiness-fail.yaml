@@ -19,7 +19,7 @@ spec:
         image: nginx:alpine
         readinessProbe:
           httpGet:
-            path: /
+            path: /healthz
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
