@@ -1,11 +1,10 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-app
+  labels:
+    app: nginx
 spec:
-  strategy:
-    type: Recreate
   replicas: 1
   selector:
     matchLabels:
@@ -17,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: nginx:latest
         ports:
         - containerPort: 80
 ---
@@ -30,4 +29,5 @@ spec:
     app: nginx
   ports:
   - port: 80
-    targetPort: 8080
+    targetPort: 80
+  type: ClusterIP
