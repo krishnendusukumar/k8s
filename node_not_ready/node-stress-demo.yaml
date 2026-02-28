@@ -5,13 +5,9 @@ metadata:
   labels:
     app: memory-stress
 spec:
+  nodeName: ip-192-168-13-121.ec2.internal
   containers:
   - name: memory-stress
     image: polinux/stress
     command: ["stress"]
-    args: ["--vm", "1", "--vm-bytes", "3G", "--vm-hang", "1"]
-    resources:
-      requests:
-        memory: "100Mi"
-      limits:
-        memory: "4Gi"
+    args: ["--vm", "2", "--vm-bytes", "1700M", "--vm-hang", "1"]
