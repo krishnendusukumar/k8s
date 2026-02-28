@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: crashloop-demo
+  name: node-not-ready-demo
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/krishnendusukumar/k8s
     targetRevision: HEAD
-    path: .
+    path: node_not_ready
   destination:
     server: https://kubernetes.default.svc
     namespace: default
