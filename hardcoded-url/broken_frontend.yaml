@@ -17,16 +17,14 @@ spec:
       containers:
       - name: frontend
         image: curlimages/curl:latest
-        # BUG: Hardcoded IP address instead of service DNS name
-        # This IP is fake and will never resolve
         command: ["/bin/sh", "-c"]
         args:
         - |
           while true; do
             echo "Connecting to backend at http://192.168.1.50:80 ..."
-            curl --max-time 3 http://192.168.1.50:80 || echo "ERROR: Connection failed to hardcoded IP!"
+            curl --max-time 3 http://192.168.1.50:80 || echo "ERROR: Connection failed"
             sleep 5
           done
         env:
         - name: BACKEND_URL
-          value: "http://192.168.1.50:80"   # ← BUG: Hardcoded IP!
+          value: "http://192.168.1.50:80"
