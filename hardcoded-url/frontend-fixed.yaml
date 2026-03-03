@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-fixed
+  labels:
+    app: frontend-fixed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-fixed
+  template:
+    metadata:
+      labels:
+        app: frontend-fixed
+    spec:
+      containers:
+      - name: frontend
+        image: curlimages/curl:latest
+        # FIX: Using Kubernetes Service DNS name instead of hardcoded IP
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          while true; do
+            echo "Connecting to backend at http://backend-service:80 ..."
+            curl --max-time 3 http://backend-service:80 && echo "SUCCESS: Connected via service DNS!"
+            sleep 5
+          done
+        env:
+        - name: BACKEND_URL
+          value: "http://backend-service:80"   # ✅ FIX: Kubernetes Service DNS
