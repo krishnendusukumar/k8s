@@ -23,4 +23,4 @@ spec:
           wget -q --timeout=3 -O- "$BACKEND_URL" || exit 1
         env:
         - name: BACKEND_URL
-          value: "http://wrong-service-name:80"
+          value: "http://backend:5678"
