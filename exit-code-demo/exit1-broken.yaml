@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exit1-broken
+  labels:
+    app: exit1-broken
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exit1-broken
+  template:
+    metadata:
+      labels:
+        app: exit1-broken
+    spec:
+      containers:
+      - name: app
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "=== App Starting ==="
+          echo "Checking required config..."
+
+          # Validate BACKEND_URL is set
+          if [ -z "$BACKEND_URL" ]; then
+            echo "FATAL: BACKEND_URL environment variable is not set!"
+            exit 1
+          fi
+
+          echo "Connecting to backend at: $BACKEND_URL"
+          wget -q --timeout=3 -O- "$BACKEND_URL"
+
+          if [ $? -ne 0 ]; then
+            echo "FATAL: Cannot reach backend at $BACKEND_URL"
+            echo "Check your service configuration!"
+            exit 1
+          fi
+
+          echo "Connected! Running..."
+          while true; do sleep 30; done
+        env:
+        - name: BACKEND_URL
+          value: "http://wrong-service-name:80"   # ← BUG: Wrong service name → Exit Code 1

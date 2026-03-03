@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exit1-fixed
+  labels:
+    app: exit1-fixed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exit1-fixed
+  template:
+    metadata:
+      labels:
+        app: exit1-fixed
+    spec:
+      containers:
+      - name: app
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "=== App Starting ==="
+          echo "Checking required config..."
+
+          if [ -z "$BACKEND_URL" ]; then
+            echo "FATAL: BACKEND_URL environment variable is not set!"
+            exit 1
+          fi
+
+          echo "Connecting to backend at: $BACKEND_URL"
+          wget -q --timeout=3 -O- "$BACKEND_URL"
+
+          if [ $? -ne 0 ]; then
+            echo "FATAL: Cannot reach backend at $BACKEND_URL"
+            exit 1
+          fi
+
+          echo "Connected! Running..."
+          while true; do sleep 30; done
+        env:
+        - name: BACKEND_URL
+          value: "http://backend-service:80"   # ✅ FIX: Correct service DNS name
