@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exit127-broken
+  labels:
+    app: exit127-broken
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exit127-broken
+  template:
+    metadata:
+      labels:
+        app: exit127-broken
+    spec:
+      containers:
+      - name: command-not-found
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Starting application..."
+          # BUG: The 'curl' package does not exist in standard alpine without 'apk add curl'
+          curl http://google.com # Command not found -> Exit Code 127
+          echo "Finished!"

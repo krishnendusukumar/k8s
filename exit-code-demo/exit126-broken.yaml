@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exit126-broken
+  labels:
+    app: exit126-broken
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exit126-broken
+  template:
+    metadata:
+      labels:
+        app: exit126-broken
+    spec:
+      containers:
+      - name: bad-permissions
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "echo 'this is a script' > /app.sh" > /setup.sh
+          sh /setup.sh
+          # BUG: We forgot to `chmod +x /app.sh` !
+          /app.sh # Execution will be denied -> Exit Code 126
