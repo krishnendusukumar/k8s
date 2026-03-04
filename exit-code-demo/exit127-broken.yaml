@@ -22,7 +22,6 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
-          set -e
           echo "Starting application..."
-          wget -qO- http://google.com
+          fakecommand123
           echo "Finished!"

@@ -22,7 +22,7 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
-          echo "echo 'this is a script' > /app.sh" > /setup.sh
-          sh /setup.sh
-          chmod +x /app.sh
+          echo '#!/bin/sh' > /app.sh
+          echo 'echo this is a script' >> /app.sh
+          chmod 644 /app.sh
           /app.sh
