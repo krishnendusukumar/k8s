@@ -24,5 +24,5 @@ spec:
         - |
           echo "echo 'this is a script' > /app.sh" > /setup.sh
           sh /setup.sh
-          # BUG: We forgot to `chmod +x /app.sh` !
-          /app.sh # Execution will be denied -> Exit Code 126
+          chmod +x /app.sh
+          /app.sh

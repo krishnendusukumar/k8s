@@ -24,6 +24,5 @@ spec:
         - |
           set -e
           echo "Starting application..."
-          # BUG: The 'curl' package does not exist in standard alpine without 'apk add curl'
-          curl http://google.com # Command not found -> Exit Code 127
+          wget -qO- http://google.com
           echo "Finished!"
