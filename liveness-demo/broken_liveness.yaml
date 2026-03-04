@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: liveness-broken
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: liveness-broken
+  template:
+    metadata:
+      labels:
+        app: liveness-broken
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          failureThreshold: 3
+          timeoutSeconds: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: liveness-service
+spec:
+  selector:
+    app: liveness-broken
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
