@@ -23,7 +23,7 @@ spec:
         args:
         - |
           for i in $(seq 1 10); do
-            wget -q --timeout=3 -O- "$BACKEND_URL" && exit 0
+            wget -q --timeout=3 -O- "$BACKEND_URL" && sleep infinity
             echo "Attempt $i failed, retrying in 5s..."
             sleep 5
           done
