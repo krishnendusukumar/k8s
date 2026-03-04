@@ -23,5 +23,5 @@ spec:
         args:
         - |
           echo "Starting application..."
-          fakecommand123
           echo "Finished!"
+          sleep infinity

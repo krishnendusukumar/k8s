@@ -2,12 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: exit126-broken
-  labels:
-    app: exit126-broken
 spec:
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: exit126-broken
@@ -19,10 +15,10 @@ spec:
       containers:
       - name: bad-permissions
         image: alpine:latest
-        command: ["/bin/sh", "-c"]
+        command: ["/bin/sh","-c"]
         args:
         - |
           echo '#!/bin/sh' > /app.sh
           echo 'echo this is a script' >> /app.sh
-          chmod 644 /app.sh
+          chmod +x /app.sh
           /app.sh
