@@ -23,10 +23,10 @@ spec:
         args:
         - |
           while true; do
-            echo "Connecting to backend at http://192.168.1.50:80 ..."
-            curl --max-time 3 http://192.168.1.50:80 || echo "ERROR: Connection failed"
+            echo "Connecting to backend at http://backend:5678 ..."
+            curl --max-time 3 http://backend:5678 || echo "ERROR: Connection failed"
             sleep 5
           done
         env:
         - name: BACKEND_URL
-          value: "http://192.168.1.50:80"
+          value: "http://backend:5678"
