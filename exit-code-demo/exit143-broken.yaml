@@ -16,13 +16,13 @@ spec:
       labels:
         app: exit143-broken
     spec:
-      terminationGracePeriodSeconds: 5
+      terminationGracePeriodSeconds: 30
       containers:
       - name: sigterm-demo
         image: ubuntu:latest
         command: ["/bin/bash", "-c"]
         args:
         - |
-          trap 'echo "Caught SIGTERM, terminating..."; exit 143' SIGTERM
+          trap 'echo "Caught SIGTERM, terminating..."; exit 0' SIGTERM
           echo "Running normally... (try deleting the pod to send SIGTERM)"
-          while true; do sleep 1; done 
+          while true; do sleep 1; done
