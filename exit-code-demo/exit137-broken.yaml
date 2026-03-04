@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exit137-broken
+  labels:
+    app: exit137-broken
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: exit137-broken
+  template:
+    metadata:
+      labels:
+        app: exit137-broken
+    spec:
+      containers:
+      - name: memory-hog
+        image: polinux/stress
+        command: ["stress"]
+        args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
+        resources:
+          limits:
+            memory: "100Mi"
