@@ -22,3 +22,4 @@ spec:
           echo 'echo this is a script' >> /app.sh
           chmod +x /app.sh
           /app.sh
+          sleep infinity
