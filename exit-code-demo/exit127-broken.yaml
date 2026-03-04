@@ -22,6 +22,7 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
+          set -e
           echo "Starting application..."
           # BUG: The 'curl' package does not exist in standard alpine without 'apk add curl'
           curl http://google.com # Command not found -> Exit Code 127
