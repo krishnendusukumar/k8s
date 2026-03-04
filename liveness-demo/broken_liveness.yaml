@@ -4,6 +4,8 @@ metadata:
   name: liveness-broken
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: liveness-broken
