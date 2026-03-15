@@ -73,3 +73,22 @@ spec:
     automated:
       prune: true
       selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: netpol-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/krishnendusukumar/k8s
+    targetRevision: HEAD
+    path: hardcoded-url
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
