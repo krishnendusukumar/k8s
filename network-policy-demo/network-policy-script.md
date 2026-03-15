@@ -44,6 +44,7 @@ Kubegrade should automatically:
 - Trace the traffic from `frontend` down to the `backend` service.
 - Detect the `backend-deny-all` NetworkPolicy intercepting the connection.
 
+
 ### 3. Review the Proposed Solution
 Kubegrade should generate an insight regarding the restrictive `NetworkPolicy`. It will propose either deleting it or fixing it by adding an ingress rule. 
 
