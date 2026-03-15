@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: netpol-demo
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        role: client
+    spec:
+      containers:
+      - name: curler
+        image: curlimages/curl
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Starting frontend curl loop..."
+          while true; do
+            echo -n "$(date) - Trying to reach backend: "
+            curl -m 3 -sS http://backend.netpol-demo.svc.cluster.local || echo "Connection Failed / Timeout"
+            sleep 5
+          done
