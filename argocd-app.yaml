@@ -1,94 +1,33 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: node-not-ready-demo
+  name: my-k8s-apps
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: https://github.com/krishnendusukumar/k8s
-    targetRevision: HEAD
-    path: node_not_ready
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: exit-code-demo
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/krishnendusukumar/k8s
-    targetRevision: HEAD
-    path: exit-code-demo
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: liveness-demo
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/krishnendusukumar/k8s
-    targetRevision: HEAD
-    path: liveness-demo
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: hardcoded-url-demo
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/krishnendusukumar/k8s
-    targetRevision: HEAD
-    path: hardcoded-url
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: netpol-demo
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/krishnendusukumar/k8s
-    targetRevision: HEAD
-    path: hardcoded-url
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+  # The generator tells it what to look for
+  generators:
+  - git:
+      repoURL: https://github.com/krishnendusukumar/k8s
+      revision: HEAD
+      # Look for any folder that contains YAMLs/deployments
+      directories:
+      - path: '*'
+  # The template is how it creates each application
+  template:
+    metadata:
+      # Automatically name the Argo app after the folder name
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/krishnendusukumar/k8s
+        targetRevision: HEAD
+        # Automatically use the folder path
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
