@@ -1,0 +1,140 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: myapps.demo.com
+spec:
+  group: demo.com
+  names:
+    kind: MyApp
+    listKind: MyApps
+    plural: myapps
+    singular: myapp
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              replicas:
+                type: integer
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: operator-demo
+---
+apiVersion: demo.com/v1
+kind: MyApp
+metadata:
+  name: app-config
+  namespace: operator-demo
+spec:
+  replicas: 2
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-operator
+  namespace: operator-demo
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: fake-operator-role
+  namespace: operator-demo
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "deployments/scale"]
+  verbs: ["get", "list", "patch", "update"]
+- apiGroups: ["demo.com"]
+  resources: ["myapps"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: fake-operator-binding
+  namespace: operator-demo
+subjects:
+- kind: ServiceAccount
+  name: fake-operator
+  namespace: operator-demo
+roleRef:
+  kind: Role
+  name: fake-operator-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: managed-app
+  namespace: operator-demo
+  ownerReferences:
+  - apiVersion: demo.com/v1
+    kind: MyApp
+    name: app-config
+    uid: "REPLACED_LATER_BY_OPERATOR" # We'll just leave this invalid or skip it for simplicity, wait, ownerReferences need valid UID. I'll omit it, the user can just look at annotations. Wait, the demo instructed "look for ownerReferences". I will have the fake-operator script patch the OwnerReference!
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: managed-app
+  template:
+    metadata:
+      labels:
+        app: managed-app
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - name: nginx
+        image: nginx:alpine
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fake-operator
+  namespace: operator-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fake-operator
+  template:
+    metadata:
+      labels:
+        app: fake-operator
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: fake-operator
+      containers:
+      - name: operator
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Infinite reconciliation loop
+          while true; do
+            # 1. Read desired state from CRD
+            DESIRED=$(kubectl get myapp app-config -n operator-demo -o jsonpath='{.spec.replicas}' 2>/dev/null)
+            
+            if [ -n "$DESIRED" ]; then
+              # 2. Enforce desired state on Deployment
+              kubectl scale deployment managed-app -n operator-demo --replicas=$DESIRED 2>/dev/null
+              
+              # 3. Patch ownerReferences so it looks ultra realistic
+              UID=$(kubectl get myapp app-config -n operator-demo -o jsonpath='{.metadata.uid}')
+              kubectl patch deployment managed-app -n operator-demo --type=merge -p "{\"metadata\":{\"ownerReferences\":[{\"apiVersion\":\"demo.com/v1\",\"kind\":\"MyApp\",\"name\":\"app-config\",\"uid\":\"$UID\"}]}}" 2>/dev/null
+            fi
+            
+            # Reconcile every 5 seconds
+            sleep 5
+          done
