@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   selector:
-    app: backend
+    app: backend-v2
   ports:
   - port: 80
     targetPort: 5678
