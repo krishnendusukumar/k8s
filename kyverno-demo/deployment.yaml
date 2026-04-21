@@ -13,6 +13,8 @@ spec:
       labels:
         app: nginx-test
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: nginx
-        image: nginx
+        image: nginxinc/nginx-unprivileged
