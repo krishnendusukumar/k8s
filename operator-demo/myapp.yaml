@@ -4,4 +4,4 @@ metadata:
   name: app-config
   namespace: operator-demo
 spec:
-  replicas: 2
+  replicas: 5
