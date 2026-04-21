@@ -23,7 +23,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: wrong-binding
-  namespace: default  
+  namespace: rbac-demo
 subjects:
 - kind: ServiceAccount
   name: test-user
