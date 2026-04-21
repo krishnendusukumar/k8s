@@ -16,4 +16,4 @@ spec:
         runAsNonRoot: true
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: nginxinc/nginx-unprivileged
