@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fake-operator
+  namespace: operator-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fake-operator
+  template:
+    metadata:
+      labels:
+        app: fake-operator
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: fake-operator
+      containers:
+      - name: operator
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Infinite reconciliation loop
+          while true; do
+            DESIRED=$(kubectl get myapp app-config -n operator-demo -o jsonpath='{.spec.replicas}' 2>/dev/null)
+            
+            if [ -n "$DESIRED" ]; then
+              kubectl scale deployment managed-app -n operator-demo --replicas=$DESIRED 2>/dev/null
+              
+              APP_UID=$(kubectl get myapp app-config -n operator-demo -o jsonpath='{.metadata.uid}')
+              kubectl patch deployment managed-app -n operator-demo --type=merge -p "{\"metadata\":{\"ownerReferences\":[{\"apiVersion\":\"demo.com/v1\",\"kind\":\"MyApp\",\"name\":\"app-config\",\"uid\":\"$APP_UID\"}]}}" 2>/dev/null
+            fi
+            
+            sleep 5
+          done

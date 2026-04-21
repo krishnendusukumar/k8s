@@ -1,0 +1,7 @@
+apiVersion: demo.com/v1
+kind: MyApp
+metadata:
+  name: app-config
+  namespace: operator-demo
+spec:
+  replicas: 2
